@@ -1,3 +1,11 @@
+const scoreContainer = document.querySelector('.score-container');
+const score = scoreContainer.querySelector('#score');
+const message = document.createElement('p');
+scoreContainer.appendChild(message);
+
+let userScore = 0;
+let compScore = 0;
+
 function computerPlay() {
    const rand = Math.floor(Math.random() * 3);
    if (rand === 0) {
@@ -9,7 +17,7 @@ function computerPlay() {
    }
 }
 
-function userPlay(userInput, comp) {
+function userPlay(userInput, comp = computerPlay()) {
     const userLower = userInput.toLowerCase();
     const userUpper = userInput.toUpperCase();
     const user = userUpper.charAt(0) + userLower.slice(1, userLower.length);
@@ -29,22 +37,44 @@ function userPlay(userInput, comp) {
 
     switch (result) {
         case 'draw':
-            alert(`Draw! You both chose ${user}.`);
+            message.textContent= `Draw! You both chose ${user}.`;
             break;
         case 'win':
-            alert(`You won this round! ${user} beats ${comp}.`);
+            ++userScore;
+            score.textContent = `${userScore} - ${compScore}`;
+            if (userScore == 5) {
+                message.textContent = `${user} beats ${comp}, you win! Play again?`;
+            } else {
+                message.textContent = `You won this round! ${user} beats ${comp}.`;
+            }
             break;
         case 'lose':
-            alert(`You lost this round! ${comp} beats ${user}.`);
+            ++compScore;
+            score.textContent = `${userScore} - ${compScore}`;
+            if (compScore == 5) {
+                message.textContent = `${comp} beats ${user}, you lost! Play again?`;
+            } else {
+                message.textContent = `You lost this round! ${comp} beats ${user}.`;
+            }
             break;
         case 'invalid':
-            result = userPlay(prompt('Please enter Rock, Paper, or Scissors'), comp);
+            message.textContent = 'Please choose Rock, Paper, or Scissors';
             break;
     }
-
-    return result;
 }
 
+function play(e) {
+    if (userScore == 5 || compScore == 5) {
+        userScore = 0;
+        compScore = 0;
+    }
+    userPlay(e.currentTarget.id);
+}
+
+const buttons = Array.from(document.querySelectorAll('button'));
+buttons.forEach (button => button.addEventListener('click', play));
+
+/*
     function playGame() {
         let userWinCount = 0;
         let compWinCount = 0;
@@ -76,5 +106,5 @@ function userPlay(userInput, comp) {
         } else alert(`Game over. It was a draw!\n\nFinal Score: ${userWinCount} - ${compWinCount} - ${drawCount}`);
 
     }
-
+*/
 
